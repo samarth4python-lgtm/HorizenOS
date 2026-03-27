@@ -8,84 +8,85 @@
         :root { --bg: #050505; --accent: #3498db; --glass: rgba(255,255,255,0.05); }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; overflow: hidden; }
         
-        /* Auth & Boot */
+        /* Auth Screen */
         #auth-screen { position: fixed; inset: 0; background: #000; z-index: 1000; display: flex; align-items: center; justify-content: center; }
         .auth-box { background: #111; padding: 40px; border-radius: 15px; border: 1px solid #222; width: 320px; text-align: center; }
         .auth-box input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #333; color: #fff; border-radius: 6px; box-sizing: border-box; }
         .auth-box button { width: 100%; padding: 12px; background: var(--accent); border: none; color: #fff; font-weight: bold; cursor: pointer; border-radius: 6px; margin-top: 10px; }
         
-        /* Desktop */
         .status-bar { height: 32px; background: #000; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; font-size: 11px; border-bottom: 1px solid #222; z-index: 100; }
-        .desktop { height: calc(100% - 32px); padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, 100px); grid-template-rows: repeat(auto-fill, 110px); gap: 20px; align-content: start; overflow-y: auto; }
-        .app-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 90px; text-align: center; transition: 0.2s; }
+        .desktop { height: calc(100% - 32px); padding: 25px; display: grid; grid-template-columns: repeat(auto-fill, 100px); grid-template-rows: repeat(auto-fill, 110px); gap: 20px; align-content: start; }
+        .app-item { display: flex; flex-direction: column; align-items: center; cursor: pointer; width: 90px; text-align: center; }
         .app-icon { width: 60px; height: 60px; border-radius: 15px; background: var(--glass); border: 1px solid #333; display: flex; align-items: center; justify-content: center; font-size: 28px; margin-bottom: 5px; }
         
-        /* Windows */
         .window { position: fixed; inset: 0; background: #000; display: none; flex-direction: column; z-index: 50; }
         .toolbar { height: 45px; background: #111; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #222; gap: 10px; }
         iframe { flex: 1; border: none; background: #000; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
-
     <div id="auth-screen">
         <div class="auth-box">
-            <h1 style="color:var(--accent)">Horizen ID</h1>
+            <h1 style="color:var(--accent); margin-bottom:20px;">Horizen ID</h1>
+            <div id="signup-fields" class="hidden">
+                <input type="text" id="reg-name" placeholder="Full Name">
+            </div>
             <input type="email" id="email" placeholder="Email">
             <input type="password" id="password" placeholder="Password">
-            <button onclick="handleAuth('login')">Login</button>
-            <button onclick="guestMode()" style="background:transparent; border:1px solid #333; font-size:11px; margin-top:10px;">Guest Mode</button>
+            <button onclick="handleAuth()" id="auth-btn">Login</button>
+            <p onclick="toggleAuth()" id="toggle-text" style="font-size:12px; color:#555; cursor:pointer; margin-top:15px;">Need an account? Sign Up</p>
         </div>
     </div>
 
     <div class="status-bar">
-        <div>HORIZEN PRO <span id="user-display" style="color:#555; margin-left:10px;"></span></div>
+        <div>HORIZEN OS PRO <span id="user-tag" style="color:var(--accent); margin-left:10px;"></span></div>
         <div id="clock">00:00</div>
     </div>
 
     <div class="desktop">
-        <div class="app-item" onclick="openWin('win-sm')"><div class="app-icon" style="background:linear-gradient(45deg, #f39c12, #e67e22)">⚡</div><span>SpeedMsg</span></div>
-        <div class="app-item" onclick="openWin('win-store')"><div class="app-icon">📦</div><span>Store</span></div>
-        
+        <div class="app-item" onclick="openWin('win-sm')"><div class="app-icon" style="background:orange">⚡</div><span>SpeedMsg</span></div>
         <div class="app-item" onclick="launch('samarth4python-lgtm/Minecraft')"><div class="app-icon">⛏️</div><span>Minecraft</span></div>
         <div class="app-item" onclick="launch('samarth4python-lgtm/Geomatry-Dash')"><div class="app-icon">🔺</div><span>Dash</span></div>
         <div class="app-item" onclick="launch('samarth4python-lgtm/HorizenMaps')"><div class="app-icon">🗺️</div><span>Maps</span></div>
-        <div class="app-item" onclick="launch('samarth4python-lgtm/Scratch')"><div class="app-icon">🐱</div><span>Scratch</span></div>
-        <div class="app-item" onclick="launch('samarth4python-lgtm/subwaysurfers')"><div class="app-icon">🏃</div><span>Subway</span></div>
-        <div class="app-item" onclick="launch('samarth4python-lgtm/DrawingSheet')"><div class="app-icon">🎨</div><span>Draw</span></div>
-        <div class="app-item" onclick="launch('samarth4python-lgtm/99nightsnitheforest')"><div class="app-icon">🌲</div><span>99 Nights</span></div>
     </div>
 
     <div id="win-sm" class="window"><div class="toolbar"><button onclick="closeWin('win-sm')">HOME</button><span>SpeedMessage</span></div><iframe src="speedmessage.html"></iframe></div>
-    <div id="win-viewer" class="window"><div class="toolbar"><button onclick="closeWin('win-viewer')">CLOSE</button><span id="v-title"></span></div><iframe id="v-frame"></iframe></div>
+    <div id="win-viewer" class="window"><div class="toolbar"><button onclick="closeWin('win-viewer')">CLOSE</button><span id="v-title">App</span></div><iframe id="v-frame"></iframe></div>
 
     <script>
         const SB_URL = "https://yumdqbgkyjqfnwwvgzky.supabase.co";
         const SB_KEY = "sb_publishable_lG4Mkf_hYYuDIVap17MgGQ_rMjR-907";
         const supabaseClient = supabase.createClient(SB_URL, SB_KEY);
 
-        // AUTO-LOGIN
-        window.onload = async () => {
-            const { data: { session } } = await supabaseClient.auth.getSession();
-            if (session) loginSuccess(session.user);
-            setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }, 1000);
-        };
+        let isSignUp = false;
+        function toggleAuth() {
+            isSignUp = !isSignUp;
+            document.getElementById('signup-fields').classList.toggle('hidden');
+            document.getElementById('auth-btn').innerText = isSignUp ? "Create Account" : "Login";
+            document.getElementById('toggle-text').innerText = isSignUp ? "Have an account? Login" : "Need an account? Sign Up";
+        }
 
-        async function handleAuth(type) {
+        async function handleAuth() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
-            if (!error) loginSuccess(data.user);
+            
+            if(isSignUp) {
+                const { error } = await supabaseClient.auth.signUp({ email, password });
+                if(error) alert(error.message); else alert("Check email for link!");
+            } else {
+                const { data, error } = await supabaseClient.auth.signInWithPassword({ email, password });
+                if (error) alert(error.message);
+                else loginSuccess(data.user);
+            }
         }
 
         function loginSuccess(user) {
             document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('user-display').innerText = user.email;
+            document.getElementById('user-tag').innerText = user.email;
         }
 
-        function guestMode() { document.getElementById('auth-screen').style.display = 'none'; document.getElementById('user-display').innerText = "Guest"; }
-
-        // AUTH BRIDGE (PostMessage)
+        // Bridge for SpeedMessage
         window.addEventListener('message', async (event) => {
             if (event.data.type === 'REQUEST_HORIZEN_AUTH') {
                 const { data: { session } } = await supabaseClient.auth.getSession();
@@ -93,19 +94,14 @@
             }
         });
 
-        async function launch(repoPath) {
-            const [user, repo] = repoPath.split('/');
+        async function launch(path) {
             openWin('win-viewer');
-            document.getElementById('v-title').innerText = repo;
-            const res = await fetch(`https://cdn.jsdelivr.net/gh/${user}/${repo}@main/index.html`);
+            const res = await fetch(`https://cdn.jsdelivr.net/gh/${path}@main/index.html`);
             document.getElementById('v-frame').srcdoc = await res.text();
         }
-
         function openWin(id) { document.getElementById(id).style.display = 'flex'; }
-        function closeWin(id) { 
-            document.getElementById(id).style.display = 'none'; 
-            if(id === 'win-viewer') document.getElementById('v-frame').srcdoc = '';
-        }
+        function closeWin(id) { document.getElementById(id).style.display = 'none'; }
+        setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }, 1000);
     </script>
 </body>
 </html>
