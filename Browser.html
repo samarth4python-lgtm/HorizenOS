@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Horizen OS - Full</title>
+    <title>Horizen OS</title>
     <style>
         :root { --bg: #050505; --accent: #3498db; --glass: rgba(255,255,255,0.05); }
         body, html { margin: 0; padding: 0; height: 100%; width: 100%; font-family: 'Segoe UI', sans-serif; background: var(--bg); color: #fff; overflow: hidden; }
         
-        .status-bar { height: 32px; background: #000; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; font-size: 12px; border-bottom: 1px solid #222; z-index: 100; }
+        .status-bar { height: 32px; background: #000; display: flex; justify-content: space-between; align-items: center; padding: 0 15px; font-size: 11px; border-bottom: 1px solid #222; z-index: 100; color: #888; }
 
         .desktop { 
             height: calc(100% - 32px); padding: 25px;
@@ -23,7 +23,6 @@
             width: 60px; height: 60px; border-radius: 15px; background: var(--glass); 
             border: 1px solid #333; display: flex; align-items: center; justify-content: center; 
             font-size: 28px; margin-bottom: 5px; backdrop-filter: blur(10px);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .app-item span { font-size: 11px; font-weight: 500; }
 
@@ -31,23 +30,31 @@
         .toolbar { height: 45px; background: #111; display: flex; align-items: center; padding: 0 15px; border-bottom: 1px solid #222; gap: 10px; }
         
         .btn-home { background: #222; color: #fff; border: 1px solid #444; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .btn-home:hover { background: #c0392b; border-color: #e74c3c; }
+        .btn-home:hover { background: #333; }
+
+        #log-content { padding: 40px; overflow-y: auto; font-family: 'Segoe UI', sans-serif; line-height: 1.8; color: #eee; max-width: 800px; margin: 0 auto; }
+        #log-content h1 { color: var(--accent); border-bottom: 1px solid #333; padding-bottom: 10px; }
+        #log-content h3 { color: #fff; margin-top: 30px; }
+        #log-content li { margin-bottom: 8px; color: #bbb; }
 
         iframe { flex: 1; border: none; width: 100%; height: 100%; background: #000; }
-        #v-frame { background: #fff; }
     </style>
 </head>
 <body>
 
     <div class="status-bar">
-        <div style="letter-spacing:1px; font-weight:bold; color:var(--accent);">HORIZEN SYSTEM</div>
+        <div>HORIZEN PRO <span style="margin-left:10px; color:#555;">v2.1.0 Stable</span></div>
         <div id="clock">00:00</div>
     </div>
 
     <div class="desktop" id="desktop">
-        <div class="app-item" onclick="openWin('win-store')"><div class="app-icon" style="background: #1e272e; color:var(--accent)">📦</div><span>Store</span></div>
-        <div class="app-item" onclick="openWin('win-browser')"><div class="app-icon" style="background: #fff;">🌐</div><span>Browser</span></div>
-        
+        <div class="app-item" onclick="openWin('win-store')"><div class="app-icon" style="background:#111; color:var(--accent)">📦</div><span>Store</span></div>
+        <div class="app-item" onclick="openWin('win-browser')"><div class="app-icon">🌐</div><span>Browser</span></div>
+        <div class="app-item" onclick="fetchUpdateLog()"><div class="app-icon" style="background:#0f3421; color:#2ecc71">📜</div><span>Updates</span></div>
+
+        <div class="app-item" onclick="openWin('win-bloxd')"><div class="app-icon">🧱</div><span>Bloxd.io</span></div>
+        <div class="app-item" onclick="openWin('win-wiki')"><div class="app-icon">📖</div><span>Wiki</span></div>
+
         <div class="app-item" onclick="launch('Minecraft', 'samarth4python-lgtm')"><div class="app-icon">⛏️</div><span>Minecraft</span></div>
         <div class="app-item" onclick="launch('Geomatry-Dash', 'samarth4python-lgtm')"><div class="app-icon">🔺</div><span>Dash</span></div>
         <div class="app-item" onclick="launch('HorizenMaps', 'samarth4python-lgtm')"><div class="app-icon">🗺️</div><span>Maps</span></div>
@@ -58,15 +65,19 @@
         <div class="app-item" onclick="launch('SpeedMessage', 'samarth4python-lgtm')"><div class="app-icon" style="background:orange">⚡</div><span>SpeedMsg</span></div>
     </div>
 
+    <div id="win-log" class="window">
+        <div class="toolbar"><button class="btn-home" onclick="closeWin('win-log')">HOME</button><span>System Update Log</span></div>
+        <div id="log-content">Initializing secure connection to GitHub CDN...</div>
+    </div>
+
     <div id="win-store" class="window">
-        <div class="toolbar"><button class="btn-home" onclick="closeWin('win-store')">HOME</button><span>App Distribution Center</span></div>
+        <div class="toolbar"><button class="btn-home" onclick="closeWin('win-store')">HOME</button><span>App Store</span></div>
         <iframe src="https://samarth4python-lgtm.github.io/HorizenOsAppInstaller/"></iframe>
     </div>
 
-    <div id="win-browser" class="window">
-        <div class="toolbar"><button class="btn-home" onclick="closeWin('win-browser')">HOME</button><span>Search</span></div>
-        <iframe src="https://www.google.com/search?igu=1"></iframe>
-    </div>
+    <div id="win-browser" class="window"><div class="toolbar"><button class="btn-home" onclick="closeWin('win-browser')">HOME</button><span>Search</span></div><iframe src="https://www.google.com/search?igu=1"></iframe></div>
+    <div id="win-bloxd" class="window"><div class="toolbar"><button class="btn-home" onclick="closeWin('win-bloxd')">HOME</button><span>Bloxd.io</span></div><iframe src="https://bloxd.io/"></iframe></div>
+    <div id="win-wiki" class="window"><div class="toolbar"><button class="btn-home" onclick="closeWin('win-wiki')">HOME</button><span>Wikipedia</span></div><iframe src="https://en.m.wikipedia.org/"></iframe></div>
 
     <div id="win-viewer" class="window">
         <div class="toolbar"><button class="btn-home" onclick="closeWin('win-viewer')">CLOSE</button><span id="v-title"></span></div>
@@ -80,22 +91,40 @@
             if(id === 'win-viewer') document.getElementById('v-frame').srcdoc = '';
         }
 
+        // --- DYNAMIC UPDATE LOG FETCH ---
+        async function fetchUpdateLog() {
+            openWin('win-log');
+            const logBox = document.getElementById('log-content');
+            try {
+                // Fetching from your specific GitHub repo via CDN
+                const response = await fetch(`https://cdn.jsdelivr.net/gh/samarth4python-lgtm/HorizenOSUpdates@main/updates.md`);
+                const text = await response.text();
+                
+                // Markdown to HTML conversion
+                logBox.innerHTML = text
+                    .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+                    .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+                    .replace(/^\- (.*$)/gim, '<li>$1</li>')
+                    .replace(/\*\*(.*)\*\*/gim, '<b>$1</b>');
+            } catch (e) {
+                logBox.innerHTML = "<h1>Offline</h1><p>Could not reach GitHub servers.</p>";
+            }
+        }
+
         window.addEventListener('message', (event) => {
             if (event.data.type === 'INSTALL_DATA') {
-                const name = event.data.name;
-                const repoPath = event.data.repo;
-                const [user, repo] = repoPath.split('/');
-                spawnIcon(name, repo, user);
-                saveApp(name, repo, user);
+                spawnIcon(event.data.name, event.data.repo);
+                saveApp(event.data.name, event.data.repo);
             }
         });
 
-        function spawnIcon(name, repo, user) {
+        function spawnIcon(name, repoPath) {
+            const [user, repo] = repoPath.split('/');
             const desk = document.getElementById('desktop');
             const item = document.createElement('div');
             item.className = 'app-item';
             item.onclick = () => launch(repo, user);
-            item.innerHTML = `<div class="app-icon" style="background:linear-gradient(45deg, #111, #222)">📦</div><span>${name}</span>`;
+            item.innerHTML = `<div class="app-icon">📦</div><span>${name}</span>`;
             desk.appendChild(item);
         }
 
@@ -106,17 +135,17 @@
             document.getElementById('v-frame').srcdoc = await res.text();
         }
 
-        function saveApp(n, r, u) {
+        function saveApp(n, rp) {
             let apps = JSON.parse(localStorage.getItem('hz_apps') || "[]");
             if(!apps.some(a => a.n === n)) {
-                apps.push({n, r, u});
+                apps.push({n, rp});
                 localStorage.setItem('hz_apps', JSON.stringify(apps));
             }
         }
 
         window.onload = () => {
             let apps = JSON.parse(localStorage.getItem('hz_apps') || "[]");
-            apps.forEach(a => spawnIcon(a.n, a.r, a.u));
+            apps.forEach(a => spawnIcon(a.n, a.rp));
             setInterval(() => {
                 document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
             }, 1000);
